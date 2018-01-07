@@ -82,7 +82,7 @@ if __name__ == '__main__':
                                      'python ssha.py '
                                      '-p Password'
                                      '[-c SSHA hash to check]')
-    parser.add_argument('-p', required=True, help="Password to encode in {SSHA}")
+    parser.add_argument('-p', required=True, help="Password to encode")
     parser.add_argument('-s', required=False, 
                         help="Salt, 4 bytes in hex format, example \"fooo\": -s 666f6f6f")    
     parser.add_argument('-c', required=False, help="{SSHA} hash to check")
