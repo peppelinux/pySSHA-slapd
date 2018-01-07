@@ -1,4 +1,4 @@
-# pySSHA
+# pySSHA1-slapd
 Python SSHA1 generator with some more debugging and analitycal info.
 It is born as a script to test OpenLDAP user passwords.
 
