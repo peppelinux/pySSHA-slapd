@@ -3,7 +3,7 @@ Python SSHA generator with hopefully some more little stuffs
 
 Introduction
 ------------
-pySSHA is a simple SSHA password generator apparently like many others, it's easy to use:
+pySSHA is a simple SSHA password generator apparently like many others, it's quite easy to use:
 ````
 python3 ssha.py -p slapdsecret
 {SSHA}omu7YHgg6_uqOIN_epZtfJtGo0ruwdSr 
