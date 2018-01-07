@@ -12,7 +12,7 @@ Usage: python ssha.py -p Password[-c SSHA hash to check]
 
 optional arguments:
   -h, --help  show this help message and exit
-  -p P        Password to encode in {SSHA}
+  -p P        Password to encode
   -s S        Salt, 4 bytes in hex format, example "fooo": -s 666f6f6f
   -c C        {SSHA} hash to check
   -b          if {SSHA} hash is in base64 format
