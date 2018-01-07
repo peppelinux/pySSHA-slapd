@@ -1,7 +1,9 @@
 # pySSHA1-slapd
 Python SSHA1 generator born as a script to test OpenLDAP user passwords.
 
-Warning: found bug, sometimes ssha hashes differs. This may depends by some padding, it need some braincrash on OpenLDAP sha1.c sources!
+Warning
+-------
+Found bug: sometimes ssha hashes differs. This may depends by some padding, it would need some braincrash on OpenLDAP sha1.c sources.
 
 Introduction
 ------------
