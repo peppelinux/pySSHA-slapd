@@ -1,5 +1,5 @@
 # pySSHA
-Python SSHA generator with some more little stuffs
+Python SSHA generator with some more debugging and analitycal info.
 
 Introduction
 ------------
@@ -60,3 +60,7 @@ python3 ssha.py -c e1NTSEF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p sl
 
 {SSHA} Check is valid: True
 ````
+
+Resources
+---------
+- https://github.com/openldap/openldap/blob/master/contrib/slapd-modules/passwd/sha2/README
