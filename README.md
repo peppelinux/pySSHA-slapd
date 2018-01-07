@@ -3,7 +3,27 @@ Python SSHA1 generator born as a script to test OpenLDAP user passwords.
 
 Warning
 -------
-Found bug: sometimes ssha hashes differs. This may depends by some padding, it would need some braincrash on OpenLDAP sha1.c sources.
+Found bug: sometimes ssha hashes differs this way:
+````
+python3 ssha.py -c {SSHA}plMFO8M0+koEJgdGUwfZ3cAeuMAm+6mp -p soreta -d3
+
+[sshaSplit debug]
+	ssha_password: {SSHA}plMFO8M0+koEJgdGUwfZ3cAeuMAm+6mp 
+	salt: 26fba9a9 
+	payload: 3bc334fa4a042607465307d9ddc01eb8c0
+
+[sshaEncode debug]
+ 	salt: 26fba9a9 
+	payload: a653053bc334fa4a042607465307d9ddc01eb8c0
+	password: soreta
+
+[checkPassword debug]
+ 	ssha_password:    {SSHA}plMFO8M0+koEJgdGUwfZ3cAeuMAm+6mp
+	created_password: {SSHA}plMFO8M0-koEJgdGUwfZ3cAeuMAm-6mp
+	salt: 26fba9a9
+	password: soreta
+````
+This may depends by some padding, it would need some braincrash on OpenLDAP sha1.c sources.
 
 Introduction
 ------------
