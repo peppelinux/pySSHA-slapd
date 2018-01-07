@@ -16,18 +16,30 @@ Python3
 Usage examples
 --------------
 
-you can also force to use a specified salt in hex format:
+You can adopt a specified salt for hashing, in hex format:
 ````
 python3 ssha.py -p slapdsecret -s 74be2629
 {SSHA}w5CJCwNQk44NjTYzcMZNKbE6Bu90viYp 
+
+Usage: python ssha.py -p Password[-c SSHA hash to check]
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -p P        Password to encode in {SSHA}
+  -s S        Salt, 4 bytes in hex format, example "fooo": -s 666f6f6f
+  -c C        {SSHA} hash to check
+  -b          if {SSHA} hash is in base64 format
+  -d D        Debug level
+
+
 ````
 
-you can verify if a password is valid comparing it with a SSHA hash:
+Verify if a password is valid comparing it with a SSHA hash:
 ````
 python3 ssha.py -c {SSHA}w5CJCwNQk44NjTYzcMZNKbE6Bu90viYp -p slapdsecret
 ````
 
-same as previous but in base64 format (like ldapsearch output does):
+Same as previous but ssha hash is in base64 format (like ldapsearch output):
 ````
 python3 ssha.py -c e1NTSEF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret
 ````
