@@ -11,7 +11,7 @@ python3 ssha.py -p slapdsecret
 
 Dependencies
 ------------
-Just Python3
+Python3
 
 Usage examples
 --------------
