@@ -1,5 +1,5 @@
 # pySSHA
-Python SSHA generator with hopefully some more little stuffs
+Python SSHA generator with some more little stuffs
 
 Introduction
 ------------
