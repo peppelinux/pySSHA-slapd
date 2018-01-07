@@ -1,5 +1,6 @@
 # pySSHA
-Python SSHA generator with some more debugging and analitycal info.
+Python SSHA1 generator with some more debugging and analitycal info.
+It is born as a script to test OpenLDAP user passwords.
 
 Introduction
 ------------
@@ -63,4 +64,5 @@ python3 ssha.py -c e1NTSEF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p sl
 
 Resources
 ---------
+- https://github.com/openldap/openldap/blob/master/libraries/liblutil/sha1.c
 - https://github.com/openldap/openldap/blob/master/contrib/slapd-modules/passwd/sha2/README
