@@ -27,37 +27,39 @@ import sys
 from base64 import urlsafe_b64encode as encode
 from base64 import urlsafe_b64decode as decode
 
+_ENC='utf-8'
+
 def sshaSplit(ssha_password, debug=0):
     payload = decode(ssha_password)[6:-4]
     salt = decode(ssha_password)[-4:]
-    if debug: 
+    if debug:
         hex_salt = binascii.hexlify(salt)
         hex_digest = binascii.hexlify(payload)
         print('\n[sshaSplit debug]\n\t'
-              'ssha_password: {} \n\tsalt: {} \n\tpayload: {}\n'.format(ssha_password, 
-                                                           str(hex_salt, 'ascii'), 
-                                                           str(hex_digest, 'ascii')))
+              'ssha_password: {} \n\tsalt: {} \n\tpayload: {}\n'.format(ssha_password,
+                                                           str(hex_salt, _ENC),
+                                                           str(hex_digest, _ENC)))
     return {'salt': salt, 'payload': payload, 'ssha': ssha_password}
 
 def sshaEncoder(password, salt=None, debug=0):
     """[0,6][payload][-4:]"""
     if salt: salt = binascii.unhexlify(salt)
     else: salt = os.urandom(4)
-    enc_password = bytes(password, encoding='ascii')
+    enc_password = bytes(password, encoding=_ENC)
     h = hashlib.sha1(enc_password)
     h.update(salt)
     if debug > 1:
         hex_salt = binascii.hexlify(salt)
         hex_digest = h.hexdigest()
-        print('[sshaEncode debug]\n \tsalt: {} \n\thex_payload: {}\n'
-                        '\tpassword: {}'.format(str(hex_salt, 'ascii'), hex_digest, password))
+        print('[sshaEncode debug]\n \tsalt: {} \n\tpayload: {}\n'
+              '\tpassword: {}\n'.format(str(hex_salt, _ENC), hex_digest, password))
     return {'salt': salt, 'digest': h.digest(), 'password': password}
 
 def hashPassword(password, salt=None, debug=0):
     sshaenc = sshaEncoder(password, salt, debug)
     b64digest_salt = encode(sshaenc['digest']+sshaenc['salt'])
     byte_res = b"{SSHA}" + b64digest_salt
-    return str(byte_res, 'ascii')
+    return str(byte_res, _ENC)
 
 def checkPassword(password, ssha_password, debug=0):
     assert ssha_password.startswith('{SSHA}')
@@ -65,26 +67,26 @@ def checkPassword(password, ssha_password, debug=0):
     sshasplit = sshaSplit(ssha_password, debug)
     payload, salt = sshasplit['payload'], sshasplit['salt']
     
-    ssha_hash = hashPassword(password, binascii.hexlify(salt))
+    ssha_hash = hashPassword(password, binascii.hexlify(salt), debug)
     
-    if debug > 1: 
+    if debug > 1:
         print('[checkPassword debug]\n \tssha_password:    {}\n\t'
               'created_password: {}'.format(ssha_password, ssha_hash))
-    if debug > 2: 
-        print('\tsalt: {}\n\tpassword: {}'.format(str(binascii.hexlify(salt), 'ascii'), 
+    if debug > 2:
+        print('\tsalt: {}\n\tpassword: {}'.format(str(binascii.hexlify(salt), _ENC),
                                       password))
-    if ssha_hash == ssha_password: 
+    if ssha_hash == ssha_password:
         return True
 
-if __name__ == '__main__':  
+if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Usage:\n'
                                      'python ssha.py '
                                      '-p Password'
                                      '[-c SSHA hash to check]')
     parser.add_argument('-p', required=True, help="Password to encode")
-    parser.add_argument('-s', required=False, 
-                        help="Salt, 4 bytes in hex format, example \"fooo\": -s 666f6f6f")    
+    parser.add_argument('-s', required=False,
+                        help="Salt, 4 bytes in hex format, example \"fooo\": -s 666f6f6f")
     parser.add_argument('-c', required=False, help="{SSHA} hash to check")
     parser.add_argument('-b', required=False, action='store_true', help="if {SSHA} hash is in base64 format")
     parser.add_argument('-d', required=False, type=int, default=0, help="Debug level")
@@ -92,7 +94,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     password = args.p
     if args.c:
-        if args.b: shahash = str(decode(args.c), 'ascii')
+        if args.b: shahash = str(decode(args.c), _ENC)
         else: shahash = args.c
         is_valid = checkPassword(password, shahash, args.d) == True
         print('\n{{SSHA}} Check is valid: {}\n'.format(is_valid))
