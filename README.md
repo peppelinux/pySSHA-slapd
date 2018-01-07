@@ -2,6 +2,8 @@
 Python SSHA1 generator with some more debugging and analitycal info.
 It is born as a script to test OpenLDAP user passwords.
 
+Warning: found bug, sometimes ssha hashes can differ. This may depends by some padding, it need some braincrashes on OpenLDAP sha1.c sources.
+
 Introduction
 ------------
 pySSHA is a simple SSHA password generator apparently like many others, it's quite easy to use:
