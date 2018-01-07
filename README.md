@@ -7,6 +7,17 @@ pySSHA is a simple SSHA password generator apparently like many others, it's qui
 ````
 python3 ssha.py -p slapdsecret
 {SSHA}omu7YHgg6_uqOIN_epZtfJtGo0ruwdSr 
+
+Usage: python ssha.py -p Password[-c SSHA hash to check]
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -p P        Password to encode in {SSHA}
+  -s S        Salt, 4 bytes in hex format, example "fooo": -s 666f6f6f
+  -c C        {SSHA} hash to check
+  -b          if {SSHA} hash is in base64 format
+  -d D        Debug level
+
 ````
 
 Dependencies
