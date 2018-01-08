@@ -1,38 +1,6 @@
 # pySSHA1-slapd
 Python SSHA1 generator born as a script to test OpenLDAP user passwords.
 
-Warning
--------
-Found bug: sometimes ssha hashes differs this way:
-````
-python3 ssha.py -c {SSHA}plMFO8M0+koEJgdGUwfZ3cAeuMAm+6mp -p soreta -d3
-
-[sshaSplit debug]
-	ssha_password: {SSHA}plMFO8M0+koEJgdGUwfZ3cAeuMAm+6mp 
-	salt: 26fba9a9 
-	payload: 3bc334fa4a042607465307d9ddc01eb8c0
-
-[sshaEncode debug]
- 	salt: 26fba9a9 
-	payload: a653053bc334fa4a042607465307d9ddc01eb8c0
-	password: soreta
-
-[checkPassword debug]
- 	ssha_password:    {SSHA}plMFO8M0+koEJgdGUwfZ3cAeuMAm+6mp
-	created_password: {SSHA}plMFO8M0-koEJgdGUwfZ3cAeuMAm-6mp
-	salt: 26fba9a9
-	password: soreta
-````
-This may depends by some padding, it would need some braincrash on OpenLDAP sha1.c sources or, maybe better, on rfc3174!
-Because we get:
-
-````
-sshaSplit payload unhexed is: b';\xc34\xfaJ\x04&\x07FS\x07\xd9\xdd\xc0\x1e\xb8\xc0'
-sshaEncode payload unhexed is:b'\xa6S\x05;\xc34\xfaJ\x04&\x07FS\x07\xd9\xdd\xc0\x1e\xb8\xc0'
-# two bytes more, tested with all the other "problematic" password... 
-# ...consider this bug in end of life: [::-1][:17][::-1] where 17 could dynamically change. Must see.
-````
-
 Introduction
 ------------
 pySSHA1-slapd is a simple SSHA1 string encoder e checker that's quite easy to use:
