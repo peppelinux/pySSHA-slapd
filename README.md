@@ -23,8 +23,8 @@ python3 ssha.py -c {SSHA}plMFO8M0+koEJgdGUwfZ3cAeuMAm+6mp -p soreta -d3
 	salt: 26fba9a9
 	password: soreta
 ````
-This may depends by some padding, it would need some braincrash on OpenLDAP sha1.c sources.
-Because:
+This may depends by some padding, it would need some braincrash on OpenLDAP sha1.c sources or, maybe better, on rfc3174!
+Because we get:
 
 ````
 sshaSplit payload unhexed is: b';\xc34\xfaJ\x04&\x07FS\x07\xd9\xdd\xc0\x1e\xb8\xc0'
@@ -35,7 +35,7 @@ sshaEncode payload unhexed is:b'\xa6S\x05;\xc34\xfaJ\x04&\x07FS\x07\xd9\xdd\xc0\
 
 Introduction
 ------------
-pySSHA is a simple SSHA password generator apparently like many others, it's quite easy to use:
+pySSHA1-slapd is a simple SSHA1 string encoder e checker that's quite easy to use:
 ````
 python3 ssha.py -p slapdsecret
 {SSHA}omu7YHgg6_uqOIN_epZtfJtGo0ruwdSr 
