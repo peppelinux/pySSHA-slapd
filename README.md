@@ -94,5 +94,6 @@ python3 ssha.py -c e1NTSEF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p sl
 
 Resources
 ---------
+- https://tools.ietf.org/html/rfc3174
 - https://github.com/openldap/openldap/blob/master/libraries/liblutil/sha1.c
 - https://github.com/openldap/openldap/blob/master/contrib/slapd-modules/passwd/sha2/README
