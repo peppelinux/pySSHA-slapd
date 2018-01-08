@@ -29,7 +29,8 @@ Because:
 ````
 sshaSplit payload unhexed is: b';\xc34\xfaJ\x04&\x07FS\x07\xd9\xdd\xc0\x1e\xb8\xc0'
 sshaEncode payload unhexed is:b'\xa6S\x05;\xc34\xfaJ\x04&\x07FS\x07\xd9\xdd\xc0\x1e\xb8\xc0'
-# two bytes more, tested with all the other "problematic" password... consider this bug in end of life :)
+# two bytes more, tested with all the other "problematic" password... 
+# ...consider this bug in end of life: [::-1][:17][::-1] where 17 could dynamically change. Must see.
 ````
 
 Introduction
