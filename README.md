@@ -1,24 +1,37 @@
-# pySSHA1-slapd
-Python SSHA1 generator born as a script to test OpenLDAP user passwords.
+# pySSHA-slapd
+Python hashlib generator born as a script to test OpenLDAP user passwords.
+It supports salted:
+
+- md5
+- sha1   (check supported)
+- sha224
+- sha256
+- sha384
+- sha512
 
 Introduction
 ------------
-pySSHA1-slapd is a simple SSHA1 string encoder e checker that's quite easy to use:
+pySSHA-slapd is a simple SSHA string encoder e checker that's quite easy to use:
 ````
 python3 ssha.py -p slapdsecret
 {SSHA}omu7YHgg6_uqOIN_epZtfJtGo0ruwdSr 
 
-Usage: python ssha.py -p Password[-c SSHA hash to check]
+
+Usage: python ssha.py -p Password [-s salt to check] [-d debug permits us to read salt]
 
 optional arguments:
   -h, --help  show this help message and exit
   -p P        Password to encode
   -s S        Salt, 4 bytes in hex format, example "fooo": -s 666f6f6f
   -c C        {SSHA} hash to check
+  -enc ENC    Encoder to use, example: sha1 sha224 sha256 sha384 sha512
   -b          if {SSHA} hash is in base64 format
   -d D        Debug level
-
 ````
+
+Development status
+------------------
+Only SSHA1 password check is currently supported, others may come soon.
 
 Dependencies
 ------------
@@ -43,7 +56,7 @@ Same as previous but ssha hash is in base64 format (like ldapsearch output):
 python3 ssha.py -c e1NTSEF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret
 ````
 
-same as the previous but with maximum debug level
+Same as the previous but with maximum debug level
 ````
 python3 ssha.py -c e1NTSEF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret -d3
 
@@ -59,6 +72,12 @@ python3 ssha.py -c e1NTSEF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p sl
 	password: slapdsecret
 
 {SSHA} Check is valid: True
+````
+
+select your preferred encoder
+````
+python3 ssha.py -p slapdsecret -s 74be2629 -enc sha512
+{SHA512}4gm2Ep0Nklb8pkss9zIs+t6/BGaGn2QYphl3UeAYuBBNW/hj8glu4jUb7JPb4LVWdCv+g0WoyYUB9VWVajQpjHS+Jik= 
 ````
 
 Resources
