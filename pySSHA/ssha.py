@@ -132,7 +132,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', required=False,
                         help="Salt, 4 bytes in hex format,"
                              " example \"fooo\": -s 666f6f6f")
-    parser.add_argument('-salt_size', required=False, type=int, default=16, 
+    parser.add_argument('-salt_size', required=False, type=int, default=8, 
                         help="salt lenght")
     parser.add_argument('-c', required=False, help="{SSHA} hash to check")
     parser.add_argument('-enc', required=False, default='sha1', 
@@ -146,17 +146,16 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     password = args.p
-    salt_size = int(args.salt_size / 2)
     if args.c:
         if args.b: shahash = str(decode(args.c), CHARSET)
         else: shahash = args.c
-        #try:
-        is_valid = checkPassword(password, shahash, salt_size, args.prefixed, args.d) == True
-        print('\n{{SSHA}} Check is valid: {}\n'.format(is_valid))
-        #except Exception as e:
-            #print(e)
-            #print('\n[ERROR] Hash check currently not supported, still needed a correct padding scheme. Please contribute.')
+        try:
+            is_valid = checkPassword(password, shahash, args.salt_size, args.prefixed, args.d) == True
+            print('\n{{SSHA}} Check is valid: {}\n'.format(is_valid))
+        except Exception as e:
+            print(e)
+            print('\n[ERROR] Hash check currently not supported, still needed a correct padding scheme. Please contribute.')
     else:
         hash_password = hashPassword(args.enc, password, args.s, 
-                                     salt_size, args.prefixed, args.d)
+                                     args.salt_size, args.prefixed, args.d)
         print(hash_password,'\n')

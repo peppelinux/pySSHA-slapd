@@ -86,7 +86,6 @@ python3 ssha.py -p slapdsecret -s 74be2629 -enc sha512
 ````
 
 without salt
-------------
 ````
 python3 ssha.py -p ciao -d 3 -salt_size 0  -enc sha512
 ````
