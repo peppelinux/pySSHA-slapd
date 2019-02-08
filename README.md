@@ -3,7 +3,7 @@ Python hashlib generator born as a script to test OpenLDAP user passwords.
 It supports salted:
 
 - md5
-- sha1   (check supported)
+- sha1
 - sha224
 - sha256
 - sha384
@@ -16,8 +16,9 @@ pySSHA-slapd is a simple SSHA string encoder e checker that's quite easy to use:
 python3 ssha.py -p slapdsecret
 {SSHA}omu7YHgg6_uqOIN_epZtfJtGo0ruwdSr 
 
+usage: ssha.py [-h] -p P [-s S] [-c C] [-enc ENC] [-b] [-prefixed] [-d D]
 
-Usage: python ssha.py -p Password [-s salt to check] [-d debug permits us to read salt]
+Usage: python ssha.py -p Password[-c SSHA hash to check]
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -26,16 +27,15 @@ optional arguments:
   -c C        {SSHA} hash to check
   -enc ENC    Encoder to use, example: sha1 sha224 sha256 sha384 sha512
   -b          if {SSHA} hash is in base64 format
-  -d D        Debug level
+  -prefixed   if suffixed or prefixed salt
+  -d D        Debug level from 1 to 5
+
 ````
 
-Development status
-------------------
-Only SSHA1 password check is currently supported, others may come soon.
 
 Dependencies
 ------------
-Python3
+Python3 and hashlib
 
 Usage examples
 --------------
@@ -48,17 +48,17 @@ python3 ssha.py -p slapdsecret -s 74be2629
 
 Verify if a password is valid comparing it with a SSHA hash:
 ````
-python3 ssha.py -c {SSHA}w5CJCwNQk44NjTYzcMZNKbE6Bu90viYp -p slapdsecret
+python3 ssha.py -c {SHA1}w5CJCwNQk44NjTYzcMZNKbE6Bu90viYp -p slapdsecret
 ````
 
 Same as previous but ssha hash is in base64 format (like ldapsearch output):
 ````
-python3 ssha.py -c e1NTSEF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret
+python3 ssha.py -c e1NIQTF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret
 ````
 
 Same as the previous but with maximum debug level
 ````
-python3 ssha.py -c e1NTSEF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret -d3
+python3 ssha.py -c e1NIQTF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret -d 3
 
 [sshaSplit debug]
 	ssha_password: {SSHA}w5CJCwNQk44NjTYzcMZNKbE6Bu90viYp 
