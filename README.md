@@ -15,23 +15,28 @@ pySSHA-slapd is a simple SSHA string encoder e checker that's quite easy to use:
 ````
 python3 ssha.py -p slapdsecret
 {SSHA}omu7YHgg6_uqOIN_epZtfJtGo0ruwdSr 
-
-usage: ssha.py [-h] -p P [-s S] [-c C] [-enc ENC] [-b] [-prefixed] [-d D]
+````
+Usage
+````
+usage: ssha.py [-h] -p P [-s S] [-salt_size SALT_SIZE] [-c C] [-enc ENC] [-b]
+               [-prefixed] [-d D]
 
 Usage: python ssha.py -p Password[-c SSHA hash to check]
 
 optional arguments:
-  -h, --help  show this help message and exit
-  -p P        Password to encode
-  -s S        Salt, 4 bytes in hex format, example "fooo": -s 666f6f6f
-  -c C        {SSHA} hash to check
-  -enc ENC    Encoder to use, example: sha1 sha224 sha256 sha384 sha512
-  -b          if {SSHA} hash is in base64 format
-  -prefixed   if suffixed or prefixed salt
-  -d D        Debug level from 1 to 5
+  -h, --help            show this help message and exit
+  -p P                  Password to encode
+  -s S                  Salt, 4 bytes in hex format, example "fooo": -s
+                        666f6f6f
+  -salt_size SALT_SIZE  salt lenght
+  -c C                  {SSHA} hash to check
+  -enc ENC              Encoder to use, example: sha1 sha224 sha256 sha384
+                        sha512
+  -b                    if {SSHA} hash is in base64 format
+  -prefixed             if suffixed or prefixed salt
+  -d D                  Debug level from 1 to 5
 
 ````
-
 
 Dependencies
 ------------
@@ -78,6 +83,12 @@ select your preferred encoder
 ````
 python3 ssha.py -p slapdsecret -s 74be2629 -enc sha512
 {SHA512}4gm2Ep0Nklb8pkss9zIs+t6/BGaGn2QYphl3UeAYuBBNW/hj8glu4jUb7JPb4LVWdCv+g0WoyYUB9VWVajQpjHS+Jik= 
+````
+
+without salt
+------------
+````
+python3 ssha.py -p ciao -d 3 -salt_size 0  -enc sha512
 ````
 
 Resources

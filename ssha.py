@@ -30,44 +30,49 @@ from base64 import b64decode as decode
 CHARSET='utf-8'
 
 def getEncoder(encoder_name):
-    return getattr(hashlib, encoder_name.lower())
+    return getattr(hashlib, encoder_name.lower().replace('ss', 's'))
 
-def sshaSplit(ssha_password, encoder, suffixed=True, debug=0):
+def sshaSplit(ssha_password, encoder, salt_size=16, suffixed=True, debug=0):
     """
     suffixed ssha: word+salt
     TODO: provide option to have prefixed too: salt+word
     """
     if debug > 3: print('sshaSplit')
-    #block_size = int(getEncoder(encoder)().block_size / 16)
-    block_size=4
-    if suffixed:
-        payload = decode(ssha_password)[:-block_size]
-        salt = decode(ssha_password)[-block_size:]
+    #salt_size = int(getEncoder(encoder)().block_size / 8)
+    if salt_size:
+        if suffixed:
+            payload = decode(ssha_password)[:-salt_size]
+            salt = decode(ssha_password)[-salt_size:]
+        else:
+            salt = decode(ssha_password)[:salt_size]
+            payload = decode(ssha_password)[salt_size:]
+        hash_type = '{S'+encoder.upper()+'}'
     else:
-        salt = decode(ssha_password)[:block_size]
-        payload = decode(ssha_password)[block_size:]
+        salt = ''
+        payload = decode(ssha_password)
+        hash_type = '{'+encoder.upper()+'}'
     if debug:
-        hex_salt = binascii.hexlify(salt)
-        hex_digest = binascii.hexlify(payload)
+        if salt: hex_salt = binascii.hexlify(salt).decode(CHARSET)
+        else: hex_salt = ''
+        hex_digest = binascii.hexlify(payload).decode(CHARSET)
         print(('\n[sshaSplit debug]\n\t'
                'ssha_password: {}{} \n'
                '\ttype: {} \n'
-               '\tblock_size: {} \n'
+               '\tsalt lenght: {} \n'
                '\tsalt: {} \n'
-               '\tpayload: {}\n').format('{'+encoder.upper()+'}',
+               '\tpayload: {}\n').format(hash_type,
                                          ssha_password,
                                          'suffixed' if suffixed else 'prefixed',
-                                         block_size,
-                                         str(hex_salt, CHARSET),
-                                         str(hex_digest, CHARSET)))
+                                         salt_size,
+                                         hex_salt,
+                                         hex_digest))
     return {'salt': salt, 'payload': payload, 
-            'ssha': ssha_password, 'block_size': block_size}
+            'ssha': ssha_password, 'salt_size': salt_size}
 
-def sshaEncoder(encoder, password, salt=None, suffixed=True, debug=0):
-    """[0,6][payload][-4:]"""
+def sshaEncoder(encoder, password, salt=None, salt_size=16, suffixed=True, debug=0):
     if debug > 3: print('sshaEncoder')
     if salt: salt = binascii.unhexlify(salt)
-    else: salt = os.urandom(4)
+    else: salt = os.urandom(salt_size)
     enc_password = bytes(password, encoding=CHARSET)
     encoder_func = getEncoder(encoder)
     if suffixed:
@@ -81,30 +86,37 @@ def sshaEncoder(encoder, password, salt=None, suffixed=True, debug=0):
               '\tpassword: {}\n'.format(str(hex_salt, CHARSET), hex_digest, password))
     return {'salt': salt, 'digest': h.digest(), 'password': password}
 
-def hashPassword(encoder, password, salt=None, suffixed=True, debug=0):
+def hashPassword(encoder, password, salt=None, salt_size=16, suffixed=True, debug=0):
     if debug > 3: print('hashPassword')
-    sshaenc = sshaEncoder(encoder, password, salt, suffixed, debug)
-    if suffixed:
-        b64digest_salt = encode(sshaenc['digest']+sshaenc['salt'])
+    sshaenc = sshaEncoder(encoder, password, salt, salt_size, suffixed, debug)
+    if salt_size:
+        if suffixed:
+            b64digest = encode(sshaenc['digest']+sshaenc['salt'])
+        else:
+            b64digest = encode(sshaenc['salt']+sshaenc['digest'])
     else:
-        b64digest_salt = encode(sshaenc['salt']+sshaenc['digest'])
-    byte_res = b"".join([bytes(i, encoding=CHARSET) for i in("{", encoder.upper(), "}", str(b64digest_salt, CHARSET))])
+        b64digest = encode(sshaenc['digest'])
+    hash_type = ''.join(("{", encoder.upper(), "}"))
+    byte_res = b"".join([bytes(i, encoding=CHARSET) for i in (hash_type, str(b64digest, CHARSET))])
     return str(byte_res, CHARSET)
 
-def checkPassword(password, ssha_password, suffixed, debug=0):
+def checkPassword(password, ssha_password, salt_size, suffixed, debug=0):
     assert ssha_password.startswith('{')
     ssha_p_splitted = ssha_password.split('}')
     encoder = ssha_p_splitted[0][1:]
     cleaned_ssha_password = ssha_p_splitted[1]
     # extract payload and salt
     sshasplit = sshaSplit(cleaned_ssha_password, encoder.lower(),
-                          suffixed, debug)
+                          salt_size, suffixed, debug)
     payload, salt = sshasplit['payload'], sshasplit['salt']
-    ssha_hash = hashPassword(encoder, password, binascii.hexlify(salt), suffixed, debug)
+    encoded_salt = binascii.hexlify(salt) if salt else None
+    ssha_hash = hashPassword(encoder, password, 
+                             encoded_salt, 
+                             salt_size, suffixed, debug)
     if debug > 1:
         print('[checkPassword debug]\n \tssha_password:    {}\n\t'
               'created_password: {}'.format(ssha_password, ssha_hash))
-    if debug > 2:
+    if debug > 2 and salt_size:
         print('\tsalt: {}\n\tpassword: {}'.format(str(binascii.hexlify(salt),
                                                   CHARSET), password))
     if ssha_hash == ssha_password:
@@ -120,6 +132,8 @@ if __name__ == '__main__':
     parser.add_argument('-s', required=False,
                         help="Salt, 4 bytes in hex format,"
                              " example \"fooo\": -s 666f6f6f")
+    parser.add_argument('-salt_size', required=False, type=int, default=16, 
+                        help="salt lenght")
     parser.add_argument('-c', required=False, help="{SSHA} hash to check")
     parser.add_argument('-enc', required=False, default='sha1', 
                         help="Encoder to use, example:\nsha1\nsha224\nsha256\nsha384\nsha512")
@@ -132,15 +146,17 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     password = args.p
+    salt_size = int(args.salt_size / 2)
     if args.c:
         if args.b: shahash = str(decode(args.c), CHARSET)
         else: shahash = args.c
-        try:
-            is_valid = checkPassword(password, shahash, args.prefixed, args.d) == True
-            print('\n{{SSHA}} Check is valid: {}\n'.format(is_valid))
-        except Exception as e:
-            print(e)
-            print('\n[ERROR] Hash check currently not supported, still needed a correct padding scheme. Please contribute.')
+        #try:
+        is_valid = checkPassword(password, shahash, salt_size, args.prefixed, args.d) == True
+        print('\n{{SSHA}} Check is valid: {}\n'.format(is_valid))
+        #except Exception as e:
+            #print(e)
+            #print('\n[ERROR] Hash check currently not supported, still needed a correct padding scheme. Please contribute.')
     else:
-        hash_password = hashPassword(args.enc, password, args.s, args.prefixed, args.d)
+        hash_password = hashPassword(args.enc, password, args.s, 
+                                     salt_size, args.prefixed, args.d)
         print(hash_password,'\n')

@@ -1,0 +1,5 @@
+TODO
+
+- handle also SHA withous salt: SSHA512 and SHA512
+- better {HASHTYPE} formatting: remove al that hardcoding!
+-  
