@@ -90,6 +90,8 @@ without salt
 python3 ssha.py -p ciao -d 3 -salt_size 0  -enc sha512
 ````
 
+OpenLDAP use a 8byte lenght salt, you can also change this value with **-salt_size** option.
+
 Resources
 ---------
 - https://tools.ietf.org/html/rfc3174
