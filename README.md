@@ -53,17 +53,17 @@ python3 ssha.py -p slapdsecret -s 74be2629
 
 Verify if a password is valid comparing it with a SSHA hash:
 ````
-python3 ssha.py -c {SHA1}w5CJCwNQk44NjTYzcMZNKbE6Bu90viYp -p slapdsecret
+python3 ssha.py -c {SHA1}pPUGnEBCmIa+fJy6ZTS87eEg+ylVYDqcrs6oHA== -p slapdsecret 
 ````
 
 Same as previous but ssha hash is in base64 format (like ldapsearch output):
 ````
-python3 ssha.py -c e1NIQTF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret
+python3 ssha.py -c e1NIQTF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret -salt_size 4
 ````
 
 Same as the previous but with maximum debug level
 ````
-python3 ssha.py -c e1NIQTF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret -d 3
+python3 ssha.py -c e1NIQTF9dzVDSkN3TlFrNDROalRZemNNWk5LYkU2QnU5MHZpWXA= -b -p slapdsecret -d 3 -salt_size 4
 
 [sshaSplit debug]
 	ssha_password: {SSHA}w5CJCwNQk44NjTYzcMZNKbE6Bu90viYp 

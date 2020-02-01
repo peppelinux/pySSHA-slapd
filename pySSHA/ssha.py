@@ -28,9 +28,13 @@ from base64 import b64encode as encode
 from base64 import b64decode as decode
 
 CHARSET='utf-8'
+# easy patch for sha1 to sha
+hashlib.sha = hashlib.sha1
+
 
 def getEncoder(encoder_name):
     return getattr(hashlib, encoder_name.lower().replace('ss', 's'))
+
 
 def sshaSplit(ssha_password, encoder, salt_size=16, suffixed=True, debug=0):
     """
@@ -69,6 +73,7 @@ def sshaSplit(ssha_password, encoder, salt_size=16, suffixed=True, debug=0):
     return {'salt': salt, 'payload': payload, 
             'ssha': ssha_password, 'salt_size': salt_size}
 
+
 def sshaEncoder(encoder, password, salt=None, salt_size=16, suffixed=True, debug=0):
     if debug > 3: print('sshaEncoder')
     if salt: salt = binascii.unhexlify(salt)
@@ -86,6 +91,7 @@ def sshaEncoder(encoder, password, salt=None, salt_size=16, suffixed=True, debug
               '\tpassword: {}\n'.format(str(hex_salt, CHARSET), hex_digest, password))
     return {'salt': salt, 'digest': h.digest(), 'password': password}
 
+
 def hashPassword(encoder, password, salt=None, salt_size=16, suffixed=True, debug=0):
     if debug > 3: print('hashPassword')
     sshaenc = sshaEncoder(encoder, password, salt, salt_size, suffixed, debug)
@@ -99,6 +105,7 @@ def hashPassword(encoder, password, salt=None, salt_size=16, suffixed=True, debu
     hash_type = ''.join(("{", encoder.upper(), "}"))
     byte_res = b"".join([bytes(i, encoding=CHARSET) for i in (hash_type, str(b64digest, CHARSET))])
     return str(byte_res, CHARSET)
+
 
 def checkPassword(password, ssha_password, salt_size, suffixed, debug=0):
     assert ssha_password.startswith('{')
@@ -119,15 +126,19 @@ def checkPassword(password, ssha_password, salt_size, suffixed, debug=0):
     if debug > 2 and salt_size:
         print('\tsalt: {}\n\tpassword: {}'.format(str(binascii.hexlify(salt),
                                                   CHARSET), password))
-    if ssha_hash == ssha_password:
+    if ssha_hash.split('}')[-1] == ssha_password.split('}')[-1]:
         return True
+
 
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='Usage:\n'
-                                     'python ssha.py '
-                                     '-p Password'
-                                     '[-c SSHA hash to check]')
+                                                 'python ssha.py '
+                                                 '-p Password'
+                                                 '[-c SSHA hash to check]',
+                                     epilog="python3 ssha.py -c "
+                                            "{SHA1}pPUGnEBCmIa+fJy6ZTS87eEg+ylVYDqcrs6oHA== "
+                                            "-p slapdsecret")
     parser.add_argument('-p', required=True, help="Password to encode")
     parser.add_argument('-s', required=False,
                         help="Salt, 4 bytes in hex format,"
@@ -150,11 +161,13 @@ if __name__ == '__main__':
         if args.b: shahash = str(decode(args.c), CHARSET)
         else: shahash = args.c
         try:
-            is_valid = checkPassword(password, shahash, args.salt_size, args.prefixed, args.d) == True
+            is_valid = checkPassword(password, shahash, args.salt_size,
+                                     args.prefixed, args.d) == True
             print('\n{{SSHA}} Check is valid: {}\n'.format(is_valid))
         except Exception as e:
             print(e)
-            print('\n[ERROR] Hash check currently not supported, still needed a correct padding scheme. Please contribute.')
+            print(('\n[ERROR] Hash check currently not supported, still '
+                   'needed a correct padding scheme. Please contribute.'))
     else:
         hash_password = hashPassword(args.enc, password, args.s, 
                                      args.salt_size, args.prefixed, args.d)
