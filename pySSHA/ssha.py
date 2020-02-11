@@ -130,7 +130,7 @@ def checkPassword(password, ssha_password, salt_size, suffixed, debug=0):
         return True
 
 
-if __name__ == '__main__':
+if __name__ == '__main__': # pragma: no cover
     import argparse
     parser = argparse.ArgumentParser(description='Usage:\n'
                                                  'python ssha.py '
