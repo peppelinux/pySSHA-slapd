@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 
 #~ Copyright 2017 Giuseppe De Marco <giuseppe.demarco@unical.it>
-#~ 
-#~ Permission is hereby granted, free of charge, to any person obtaining a 
-#~ copy of this software and associated documentation files (the "Software"), 
-#~ to deal in the Software without restriction, including without limitation 
-#~ the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-#~ and/or sell copies of the Software, and to permit persons to whom the Software 
+#~
+#~ Permission is hereby granted, free of charge, to any person obtaining a
+#~ copy of this software and associated documentation files (the "Software"),
+#~ to deal in the Software without restriction, including without limitation
+#~ the rights to use, copy, modify, merge, publish, distribute, sublicense,
+#~ and/or sell copies of the Software, and to permit persons to whom the Software
 #~ is furnished to do so, subject to the following conditions:
-#~ 
-#~ The above copyright notice and this permission notice shall be included 
+#~
+#~ The above copyright notice and this permission notice shall be included
 #~ in all copies or substantial portions of the Software.
-#~ 
-#~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
-#~ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-#~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-#~ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-#~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-#~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+#~
+#~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+#~ OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+#~ THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#~ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #~ DEALINGS IN THE SOFTWARE.
 
 import binascii
@@ -70,7 +70,7 @@ def sshaSplit(ssha_password, encoder, salt_size=16, suffixed=True, debug=0):
                                          salt_size,
                                          hex_salt,
                                          hex_digest))
-    return {'salt': salt, 'payload': payload, 
+    return {'salt': salt, 'payload': payload,
             'ssha': ssha_password, 'salt_size': salt_size}
 
 
@@ -102,7 +102,7 @@ def hashPassword(encoder, password, salt=None, salt_size=16, suffixed=True, debu
             b64digest = encode(sshaenc['salt']+sshaenc['digest'])
     else:
         b64digest = encode(sshaenc['digest'])
-    hash_type = ''.join(("{", encoder.upper(), "}"))
+    hash_type = ''.join(("{", "S" if salt else "", encoder.upper(), "}"))
     byte_res = b"".join([bytes(i, encoding=CHARSET) for i in (hash_type, str(b64digest, CHARSET))])
     return str(byte_res, CHARSET)
 
@@ -117,8 +117,8 @@ def checkPassword(password, ssha_password, salt_size, suffixed, debug=0):
                           salt_size, suffixed, debug)
     payload, salt = sshasplit['payload'], sshasplit['salt']
     encoded_salt = binascii.hexlify(salt) if salt else None
-    ssha_hash = hashPassword(encoder, password, 
-                             encoded_salt, 
+    ssha_hash = hashPassword(encoder, password,
+                             encoded_salt,
                              salt_size, suffixed, debug)
     if debug > 1:
         print('[checkPassword debug]\n \tssha_password:    {}\n\t'
@@ -143,18 +143,18 @@ if __name__ == '__main__':
     parser.add_argument('-s', required=False,
                         help="Salt, 4 bytes in hex format,"
                              " example \"fooo\": -s 666f6f6f")
-    parser.add_argument('-salt_size', required=False, type=int, default=8, 
+    parser.add_argument('-salt_size', required=False, type=int, default=8,
                         help="salt lenght")
     parser.add_argument('-c', required=False, help="{SSHA} hash to check")
-    parser.add_argument('-enc', required=False, default='sha1', 
+    parser.add_argument('-enc', required=False, default='sha1',
                         help="Encoder to use, example:\nsha1\nsha224\nsha256\nsha384\nsha512")
-    parser.add_argument('-b', required=False, action='store_true', 
+    parser.add_argument('-b', required=False, action='store_true',
                         help="if {SSHA} hash is in base64 format")
-    parser.add_argument('-prefixed', required=False, action="store_false", 
+    parser.add_argument('-prefixed', required=False, action="store_false",
                         help="if suffixed or prefixed salt")
-    parser.add_argument('-d', required=False, type=int, default=0, 
+    parser.add_argument('-d', required=False, type=int, default=0,
                         help="Debug level from 1 to 5")
-    
+
     args = parser.parse_args()
     password = args.p
     if args.c:
@@ -169,6 +169,6 @@ if __name__ == '__main__':
             print(('\n[ERROR] Hash check currently not supported, still '
                    'needed a correct padding scheme. Please contribute.'))
     else:
-        hash_password = hashPassword(args.enc, password, args.s, 
+        hash_password = hashPassword(args.enc, password, args.s,
                                      args.salt_size, args.prefixed, args.d)
         print(hash_password,'\n')

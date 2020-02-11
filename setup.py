@@ -7,7 +7,7 @@ def readme():
 DESC = "Create and verify common LDAP passwords and hashes"
 
 setup(name='pySSHA',
-      version='0.8.1',
+      version='1.0.0',
       description=DESC,
       long_description=readme(),
       long_description_content_type='text/markdown',
